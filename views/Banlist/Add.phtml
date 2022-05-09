@@ -1,0 +1,28 @@
+<h1 class="text-center pt-3 pb-3">Přidání banu</h1>
+<form action="#" method="POST" class="admin">
+    <select name="type" class="form-control">
+        <option>ctban</option>
+        <option>ban</option>
+        <option>comm</option>
+    </select>
+    <input type="text" class="form-control mt-3 mt-1 mb-1 d-inline" style="width: 49.5%" autocomplete="off" name="name" placeholder="Nick hráče">
+    <ul id="result">
+            
+    </ul>
+    <input name="steamid" required="true" type="text" placeholder="STEAM_1:X:Y" class="form-control mt-3 mb-1 d-inline" style="width: 49.5%"/>
+    <input type="text" name="reason" placeholder="Důvod" class="form-control mt-3 mb-1" required="true" />
+
+    <label for="rounds" class="mt-3">Pouze pro CT Bany</label>
+    <input type="number" name="rounds" id="rounds" placeholder="Kola" class="form-control mb-1"/>
+
+    <label for="comm_type" class="mt-3">Pouze pro Comms</label>
+    <select id="comm_type" name="comm_type" class="form-control">
+        <option value="1">Mikrofon</option>
+        <option value="2">Chat</option>
+    </select>
+
+    <label for="expire" class="mt-3">Pouze pro bany a comms - Expirace:</label>
+    <input type="datetime-local" name="expire" id="expire" class="form-control" value="<?=date("Y-m-d\TH:i:s", strtotime("now")+1)?>">
+
+    <button class="btn btn-primary w-100 mt-3" name="ban_add">Přidat ban</button>
+</form>

@@ -1,0 +1,11 @@
+<?php require('Main.phtml'); ?>
+
+<form action="" class="admin" method="POST">
+    <input type="text" class="form-control mt-3 mt-1 mb-1 d-inline" style="width: 49.5%" autocomplete="off" name="name" placeholder="Nick hráče">
+    <ul id="result">
+            
+    </ul>
+    <input type="text" class="form-control mt-3 mt-1 mb-1 d-inline" style="width: 49.5%" name="steamid" placeholder="STEAM_1:X:Y">
+    <input type="datetime-local" class="form-control mb-1" name="expire" style="width: 99.5%" value="<?=date("Y-m-d\TH:i:s", strtotime("now"))?>">
+    <button class="btn btn-primary" name="setvip" style="width: 99.5%">Přidělit VIP</button>
+</form>

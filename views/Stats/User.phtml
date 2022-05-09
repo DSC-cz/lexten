@@ -1,0 +1,313 @@
+<?php
+    $stats = $this->getStats();
+    $steamapi = new Steam;
+    $user_info = $steamapi->getData(array(User::toCommunityID($stats['server'][0]['steamid'])));
+    $server = $stats['server'][0];
+    if(isset($stats['web'])) $web = $stats['web'][0];
+    else $web = [];
+    $steam_status = array(0=>"avatar-offline", 1=>"avatar--online",2=>"avatar--online",3=>"avatar--online",4=>"avatar--online",5=>"avatar--online");
+    $steam_status_ch = array(0=>"Offline", 1=>"Online",2=>"Away",3=>"Busy",4=>"Snooze",5=>"Looking to trade", 6=>"Looking to game");
+?>
+
+<article>
+    <section class="stats-header">
+        <img src="<?=$user_info[0]->avatarfull?>" class="avatar <?=isset($user_info[0]->gameextrainfo) ? "avatar--ingame" : $steam_status[$user_info[0]->personastate]?>" data-toggle="tooltip" data-placement="bottom" title="<?=isset($user_info[0]->gameextrainfo) ? $user_info[0]->gameextrainfo : $steam_status_ch[$user_info[0]->personastate]?>" alt="Avatar uživatele" /></div>
+        <h1 <?=isset($web['barva']) ? 'style="color: #'.$web['barva'].'"' : ''?>><?=$user_info[0]->personaname?></h1>
+        <p class="group"><?=isset($web['nazev']) ? $web['nazev'] : ''?></p>
+        <?php if(isset($web["discord_id"])):?>
+        <a href="https://discordapp.com/users/<?=$web['discord_id']?>" class="icon icon--discord"><i class="fab fa-discord"></i></a>
+        <?php endif;?>
+        <a href="https://steamcommunity.com/profiles/<?=User::toCommunityID($server['steamid'])?>" class="icon icon--steam"><i class="fab fa-steam"></i></a>
+    
+        <input type="text" id="search" name="name" autocomplete="off" class="form-control .stats-header--search-box" placeholder="Vyhledat hráče ..." />
+        <ul id="result">
+            
+        </ul>
+    </section>
+
+    <section id="info" class="stats-content">
+            <marquee scrollamount="10">
+                <ul>
+                    <li>První připojení: <?=date("d.m.Y H:i", strtotime($server["firstjoin"]))?></li>
+                    <li>Poslední připojení: <?=date("d.m.Y H:i", $server["lastaccountuse"])?></li>
+                    <li>Registrace na webu: <?=date("d.m.Y H:i", strtotime($web["firstjoin"]))?></li>
+                    <li>Naposledy na webu: <?=date("d.m.Y H:i", strtotime($web["lastjoin"]))?></li>
+                    <li>VIP: <?=$server["vip"] > strtotime("now") ? "Aktivní do ".date("d.m.Y H:i", $server['vip']) : "Neaktivní"?></li>
+                </ul>
+            </marquee>
+    </section>
+
+    <section id="time" class="stats-content">
+        <div class="half">
+            <img src="https://lexten.cz/images/CT_RL.png?v=12" alt="CT">
+            <h3>
+                Nahráno za CT
+            </h3>
+            <h2>
+                <?=round($server['ct']/60/60,1)?>h (<?=round(($server['ct']/($server['ct']+$server['t']+$server['spec']))*100, 1)?>%)
+            </h2>
+        </div>
+        <div class="half half--right">
+            <img src="https://lexten.cz/images/T_RL.png" alt="CT">
+            <h3>
+                Nahráno za T
+            </h3>
+            <h2>
+                <?=round($server['t']/60/60,1)?>h (<?=round(($server['t']/($server['ct']+$server['t']+$server['spec']))*100, 1)?>%)
+            </h2>
+        </div>
+
+        <div class="absolute-center">
+            <h3>
+                V nečinnosti
+            </h3>
+            <h2>
+                <?=round($server['spec']/60/60,1)?>h (<?=round(($server['spec']/($server['ct']+$server['t']+$server['spec']))*100, 1)?>%)
+            </h2>
+        </div>
+    
+        <button id="time_modal_open" class="btn btn-secondary w-50 pt-2 pb-2">Zobrazit více informace o nahraném čase</button><button id="session_modal_open" class="btn btn-dark w-50 pt-2 pb-2">Zobrazit informace o posledních připojení</button>
+
+        </section>
+
+        <section id="session_modal" class="time-modal">
+            <div class="time-modal--content">
+                <span class="close">&times;</span>
+		<div class="modal-width">
+                <table class="table table-dark table-stripped">
+                    <thead>
+                        <tr>
+                            <th>Připojení</th>
+                            <th>Odpojení</th>
+                            <th>Nahraný čas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $jh = $this->getUserJoinHistory();
+                            for($i = 0; $i < count($jh); $i++){
+                                ?>
+                                    <tr>
+                                        <td><?=date("d.m.Y H:i", $jh[$i]['start'])?></td>
+                                        <td><?=date("d.m.Y H:i", $jh[$i]['end'])?></td>
+                                        <td><?=round($jh[$i]['connected']/60/60, 1)?>h</td>
+                                    </tr>
+                                <?php
+                            }
+                        ?>
+                    </tbody>
+                </table>
+		</div>
+            </div>
+        </section>
+
+        <section id="time_modal" class="time-modal">
+            <div class="time-modal--content">
+                <span class="close">&times;</span>
+
+                <div class="row">
+                    <div class="col-md-4 mt-5">
+                        <h3>Naživu</h3>
+                        <h2 class="blue"><?=round($server['alive']/60/60,1)?>h</h2>
+                    </div>
+                    <div class="col-md-4 mt-5">
+                        <h3>Mrtvý</h3>
+                        <h2 class="blue"><?=round($server['dead']/60/60,1)?>h</h2>
+                    </div>
+                    <div class="col-md-4 mt-5">
+                        <h3>Warmup</h3>
+                        <h2 class="blue"><?=round($server['warmup']/60/60,1)?>h</h2>
+                    </div>
+                    <div class="col-md-4 mt-5">
+                        <h3>Clantag</h3>
+                        <h2 class="blue"><?=round($server['clantag']/60/60,1)?>h</h2>
+                    </div>
+                    <div class="col-md-4 mt-5">
+                        <h3>Rebel</h3>
+                        <h2 class="blue"><?=round($server['rebel']/60/60,1)?>h</h2>
+                    </div>
+                    <div class="col-md-4 mt-5">
+                        <h3>Freeday</h3>
+                        <h2 class="blue"><?=round($server['freeday']/60/60,1)?>h</h2>
+                    </div>
+
+                    <div class="col-md-5 mt-4">
+                    <h3 class="mt-4">Používané nicky:</h3>
+                    <p class="blue"><?php
+                        $name_history = $this->getUserNicknameHistory();
+                        $connected_sum = 0;
+                        for($i = 0; $i < count($name_history); $i++) $connected_sum+=$name_history[$i]['connected'];
+                        foreach($name_history as $user){
+                            echo '<strong>'.$user['name'].'</strong> ('.round(($user['connected']/$connected_sum)*100, 1).'%), ';
+                        }
+                    ?></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="stats" class="stats-content">
+            <div class="half">
+                <h1>Statistiky <span class="blue">CT</span></h1>
+                <ul>
+                    <li>
+                        <img src="/images/stats/kill.png" alt="Kill">
+                        <span class="blue bold"><?=$server['ct_kills']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Killů
+                    </li>
+                    <ul>
+                        <li>
+                            <img src="/images/stats/hs.png" alt="Headshot">
+                            <span class="blue bold"><?=$server['ct_kills_hs']?></span>
+                            <span class="darkgray">&nbsp;|&nbsp;</span>
+                            Headshot
+                        </li>
+                        <li>
+                            <img src="/images/stats/ns.png" alt="Noscope">
+                            <span class="blue bold"><?=$server['ct_kills_ns']?></span>
+                            <span class="darkgray">&nbsp;|&nbsp;</span>
+                            Noscope
+                        </li>
+                    </ul>
+                    <li>
+                        <img src="/images/stats/death.png" alt="Death">
+                        <span class="blue bold"><?=$server['ct_deaths']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Umrtí
+                    </li>
+                    <li>
+                        <img src="/images/stats/lg.png" alt="Last Guard">
+                        <span class="blue bold"><?=$server['lg_claims']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Last Guard
+                    </li>
+                    <li>
+                        <img src="/images/stats/warden.png" alt="Warden">
+                        <span class="blue bold"><?=$server['warden_count']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Warden
+                    </li>
+		    <?php if(User::isModerator([1,2])):?>
+		    <hr color="white" />
+		    <li style="max-width:100;word-break:break-word;display:block;">
+			<strong>Identifikace:</strong>&nbsp;<?=$server["steamid"]?>&nbsp;&bull;&nbsp;<?=$server["accountid"]?><br>
+		    </li>
+		    <?php endif; ?>
+		  
+                </ul>
+            </div>
+
+            <div class="half">
+            <h1>Statistiky <span class="blue">T</span></h1>
+            <ul>
+                    <li>
+                        <img src="/images/stats/kill.png" alt="Kill">
+                        <span class="blue bold"><?=$server['t_kills']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Killů
+                    </li>
+                    <ul>
+                        <li>
+                            <img src="/images/stats/hs.png" alt="Headshot">
+                            <span class="blue bold"><?=$server['t_kills_hs']?></span>
+                            <span class="darkgray">&nbsp;|&nbsp;</span>
+                            Headshot
+                        </li>
+                        <li>
+                            <img src="/images/stats/ns.png" alt="Noscope">
+                            <span class="blue bold"><?=$server['t_kills_ns']?></span>
+                            <span class="darkgray">&nbsp;|&nbsp;</span>
+                            Noscope
+                        </li>
+                    </ul>
+                    <li>
+                        <img src="/images/stats/death.png" alt="Death">
+                        <span class="blue bold"><?=$server['t_deaths']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Umrtí     
+                    </li>
+                    <li>
+                        <img src="/images/stats/pp.png" alt="PP">
+                        <span class="blue bold"><?=$server['pp_claims']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Poslední přání
+                    </li>
+                    <li>
+                        <img src="/images/stats/fd.png" alt="FD">
+                        <span class="blue bold"><?=$server['fd_count']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Freeday
+                    </li>
+                    <li>
+                    <img src="/images/stats/bomb.png" alt="Bomb">
+                        <span class="blue bold"><?=$server['bombs']?></span>
+                        <span class="darkgray">&nbsp;|&nbsp;</span>
+                        Bomb  
+                    </li>
+                </ul>
+            </div>
+    </section>
+
+    <section id="web" class="stats-content">
+        <div class="third">
+            <h2><?=isset($web['forum_reactions']) ? $web['forum_reactions'] : 0?></h2>
+            <h3>Reakcí</h3>
+        </div>
+        <div class="third">
+            <h2><?=isset($web['forum_topics']) ? $web['forum_topics'] : 0?></h2>
+            <h3>Forum příspěvků</h3>
+        </div>
+        <div class="third">
+            <h2><?=isset($web['news_comments']) ? $web['news_comments'] : 0?></h2>
+            <h3>Komentářů</h3>
+        </div>
+    </section>
+
+    <section id="bans" class="stats-content">
+        <?php
+            $banlist = new Banlist();
+            try{
+                $bans = $banlist->getBans(1, 1, "WHERE a.accountid=:accountid AND a.unban = 0 AND (a.expire > ".strtotime("now")." OR a.expire = 0)", [":accountid"=>$server["accountid"]]);
+                foreach($bans as $row){
+                    echo '<a href="/banlist/detail/ban/'.$row['id'].'" class="btn btn-danger w-100 mt-3 pt-3 pb-3">Hráč má aktivní Ban</a>';
+                }
+            } catch (Exception $e){
+                try{
+                    $bans = $banlist->getBans(1, 1, "WHERE a.accountid=:accountid AND a.unban = 0", [":accountid"=>$server["accountid"]]);
+                    echo '<a href="/banlist/bans/user/'.$server["accountid"].'" class="btn btn-secondary w-100 mt-3 pt-3 pb-3">Hráč nemá aktivní ban</a>';
+                } catch (Exception $d){
+                    echo '<button disabled="true" class="btn btn-secondary w-100 mt-3 pt-3 pb-3">Hráč nemá aktivní ban</button>';
+                }
+            }
+
+            try{
+                $comms = $banlist->getComms(1, 1, "WHERE a.accountid=:accountid AND a.removed = 0 AND (a.expire > ".strtotime("now")." OR a.expire = 0)", [":accountid"=>$server["accountid"]]);
+                foreach($comms as $row){
+                    echo '<a href="/banlist/detail/comm/'.$row['id'].'" class="btn btn-danger w-100 mt-3 pt-3 pb-3">Hráč má aktivní umlčení</a>';
+                }
+            } catch (Exception $e){
+                try{
+                    $comms = $banlist->getComms(1, 1, "WHERE a.accountid=:accountid AND a.removed = 0", [":accountid"=>$server["accountid"]]);
+                    echo '<a href="/banlist/comms/user/'.$server["accountid"].'" class="btn btn-secondary w-100 mt-3 pt-3 pb-3">Hráč nemá aktivní umlčení</a>';
+                } catch (Exception $d){
+                    echo '<button disabled="true" class="btn btn-secondary w-100 mt-3 pt-3 pb-3">Hráč nemá aktivní umlčení</button>';
+                }
+            }
+
+            try{
+                $ctbans = $banlist->getCTBans(1, 1, "WHERE a.accountid=:accountid AND (a.rounds_actual > 0 OR a.rounds_actual = -1)", [":accountid"=>$server["accountid"]]);
+                foreach($ctbans as $row){
+                    echo '<a href="/banlist/detail/ctban/'.$row['id'].'" class="btn btn-danger w-100 mt-3 pt-3 pb-3">Hráč má aktivní CT ban</a>';
+                }
+            } catch (Exception $e){
+                try{
+                    $ctbans = $banlist->getCTBans(1, 1, "WHERE a.accountid=:accountid", [":accountid"=>$server["accountid"]]);
+                    echo '<a href="/banlist/ctbans/user/'.$server["accountid"].'" class="btn btn-secondary w-100 mt-3 pt-3 pb-3">Hráč nemá aktivní CT ban</a>';
+                } catch (Exception $d){
+                    echo '<button disabled="true" class="btn btn-secondary w-100 mt-3 pt-3 pb-3">Hráč nemá aktivní CT ban</button>';
+                }
+            }
+        ?>
+    </section>
+</article>

@@ -1,0 +1,20 @@
+<article class="halfpage">
+    <?php
+    if($this->error):
+    ?>
+    <section class="error">
+        <?=$this->error?>
+    </section>
+    <?php endif; unset($_SESSION['error_message']); ?>
+    <form action="" id="topic_add" method="POST">
+        <input type="text" class="form-control" name="title" value="<?=isset($_POST['title']) ? $_POST['title'] : ""?>" placeholder="Nadpis tématu" />
+        <textarea style="min-height: 500px;" name="text">
+            <?=isset($_POST['text']) ? $_POST['text'] : ""?>
+        </textarea>
+        <button class="btn btn-primary" name="topicadd">Přidat téma</button>
+    </form>
+</article>
+
+<?php
+    require('aside.phtml');
+?>

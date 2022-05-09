@@ -1,0 +1,46 @@
+<article>
+    <section class="list">
+			<?php
+				function endsWith($string, $endString) { 
+					$len = strlen($endString); 
+					if ($len == 0) { 
+						return true; 
+					} 
+					return (substr($string, -$len) === $endString); 
+				} 
+				$conn = ftp_connect("gocasa4.fakaheda.eu");
+				$login = ftp_login($conn, "27479_demos", "Tfa5CvpR");
+				
+				$mode = ftp_pasv($conn, TRUE);
+
+				if ((!$conn) || (!$login) || (!$mode)) {
+				   die("Nepřipojen k FTP");
+				}
+				
+				$dems = ftp_nlist($conn, "/");
+				
+				foreach(array_reverse($dems) as $dem){
+					$filename = explode("_CZ", $dem);
+                    if(!endswith(implode("",$filename), ".dem.gz") && !endswith(implode("", $filename), ".dem")){
+                       continue;
+                    }
+					$map = explode("-", rtrim($filename[0], '-'))[4];
+					if(!empty($map) && ftp_size($conn, $dem) > 2000000 && ftp_mdtm($conn, $dem) > strtotime("now")-432000){
+						$file = $map;
+						?>
+							<div class="map" style="background: url('https://lexten.cz/images/maps/<?php echo $map;?>.jpg') #e0e0e0;background-size: 100% 100%;">
+							<?php
+								if(endsWith($dem, ".dem")) echo '<div class="live">ŽIVĚ</div>';
+							?>
+							<div class="text"><?php echo $file;?></div><div class="date"><?php echo '<h3>'.date("d", ftp_mdtm($conn, $dem)).'</h3><h4>'.date("M", ftp_mdtm($conn, $dem)).'</h4></div>';
+							echo '<div class="time"><h5>'.date("H:i", ftp_mdtm($conn, $dem)).'</h5></div>';?>
+							<div class="download"><a href="https://lexten.cz/download.php?file=<?php echo $dem;?>" target="blank">Stáhnout demo (<?php echo round(ftp_size($conn, $dem)/1000000, 2).'MB';?>)</a></div>
+							</div>
+						<?php
+					}else if(ftp_mdtm($conn, $dem) < strtotime("now")-432000 && endsWith($dem, ".gz")) ftp_delete($conn, $dem);
+				}
+				
+				ftp_close($conn);
+			?>
+        </div>
+</article>

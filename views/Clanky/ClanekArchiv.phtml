@@ -1,0 +1,42 @@
+<article>
+    <table class="table table-dark table-stripped">
+        <thead>
+            <tr>
+                <th>Novinka</th>
+                <th>Autor</th>
+                <th>Komentáře</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                $news = $this->selectNews(10);
+
+                for($i = 0; $i < count($news);$i++){
+                    ?>
+                    <tr>
+                        <td><a href="/clanek/<?=$news[$i]['alias']?>"><?=$news[$i]['nazev']?></a></td>
+                        <td>
+                            <img src="<?=$news[$i]['avatarsmall']?>" class="avatar" alt="Avatar" />
+                            <a href="/stats/<?=$news[$i]['author']?>" <?=!empty($news[$i]['barva'])? 'style="color: #'.$news[$i]['barva'].'"' : ''?>><?=$news[$i]['nick']?></a>
+                        </td>
+                        <td><?=$news[$i]['comments']?> komentářů</td>
+                    </tr>
+                    <?php
+                }
+            ?>
+        </tbody>
+    </table>
+    <?php
+    if (User::isModerator([1,2])): ?>
+    <section class="d-flex justify-content-end mt-3">
+        <a href="add" class="btn btn-primary">Přidat článek</a>
+    </section>
+    <?php
+    endif;
+    ?>
+    <section id="paginator">
+            <?php
+                $this->pagination(0, '`news`', '`public`=1', [], 10, $this->page, 2);
+            ?>
+    </section>
+</article>

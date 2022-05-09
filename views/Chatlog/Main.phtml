@@ -1,0 +1,51 @@
+<article>
+    <section class="header d-flex justify-content-between mb-3 align-items-center">
+        <h1>Chatlog</h1>
+        <button id="time_modal_open" class="btn btn-secondary">Legenda</button>
+    </section>
+
+    <section id="time_modal" class="time-modal chat">
+            <div class="time-modal--content">
+                <span class="close">&times;</span>
+                <p>Seznam vyskytů barev a jejich význam</p>
+                <table class="table text-white">
+                    <tbody>
+                        <tr class="chat--all"><td>Chat pro všechny</td></tr>
+                        <tr class="chat--ct"><td>Chat pro team CT</td></tr>
+                        <tr class="chat--t"><td>Chat pro team T</td></tr>
+                        <tr class="chat--spec"><td>Chat pro team Spectate</td></tr>
+                        <tr class="chat"><td><img src="/images/stats/death.png" width="20px" class="mr-2" /> Chat mrtvých</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+    <section id="chat" class="chat">
+        <table class="table text-white">
+            <tbody>
+        <?php
+            $messages = $this->getMessages(15);
+
+            foreach($messages as $message){
+                ?>
+                    <tr class="chat--<?=( $message['teamchat'] ? ($message['team'] == 2 ? 'ct' : ($message['team'] == 3 ? 't' : 'spec')) : 'all' )?>">
+                        <td><?=date("d.m.Y H:i", strtotime($message['time']))?></td>
+                        <td><img src="<?=$message['avatar']?>" class="avatar" alt="Avatar"/> <?=$message['name']?></td>
+                        <td><?=$message['dead'] ? '<img src="/images/stats/death.png" width="20px" class="mr-2" />' : ''?><?=preg_replace('#<script(.*?)>(.*?)</script>#is', '', $message['message'])?></td>
+                        <td><?=$message['map']?></td>
+                    </tr>
+
+                <?php
+            }
+        ?>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="pagination">
+        <?php
+            $this->pagination(1, 'sm_chat', '1=1', [], 15, $this->page, 1);
+        ?>
+    </section>
+</article>

@@ -1,0 +1,19 @@
+<?php require('Main.phtml'); ?>
+
+<form action="" method="POST" class="admin position-relative w-100">
+    <input name="name" type="text" autocomplete="off" placeholder="Nick hráče" class="form-control mt-3 mb-1 d-inline" style="width: 49.5%"/>
+    <div id="result">
+
+    </div>
+    <input name="steamid" type="text" placeholder="STEAM_1:X:Y" class="form-control mt-3 mb-1 d-inline" style="width: 49.5%"/>
+
+    <select name="group" class="form-control mb-1" style="width:99.5%">
+        <option value="0">Uživatel</option>
+        <?php
+            foreach($this->getRoles() as $role){
+                echo '<option value="'.$role['id'].'">'.$role['nazev'].'</option>';
+            }
+        ?>
+    </select>
+    <button class="btn btn-primary" name="setgroup" style="width: 99.5%">Přidělit roli</button>
+</form>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="cs-CZ">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="<?=!empty($c->returnInfo()["head"]["desc"]) ? $c->returnInfo()["head"]["desc"] : "Hledáš unikátní Jailbreak server, který CZ / SK scéna postrádá? LEXTEN Jailbreak je založen primárně na originalitě! Staň součástí naší komunity!"?>">
+	<meta name="keywords" content="originalita, unikátní, jailbreak, český jailbreak, csgo, servery, komunita, upgrady, freevip">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <title><?= $c->returnInfo()["name"] ?> • <?= $c->returnInfo()["head"]["title"]; ?></title>
+    <link rel="stylesheet" type="text/css" href="/css/style.min.css?v=4" />
+	<?=$c->links()?>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://cdn.tiny.cloud/1/nybizmdm78qzz7hk11j9a99p1tepqrgur1x4kggmzs7aooth/tinymce/5/tinymce.min.js" referrerpolicy="origin" type="text/javascript"></script>
+    <script type="text/javascript">
+	tinymce.init({
+      selector : "textarea:not(.no-tinymce)",
+	  relative_urls : false,
+      skin: "oxide-dark",
+      content_css: "dark",
+	  remove_script_host : true,
+	  language_url: 'https://cdn.jsdelivr.net/npm/tinymce-lang/langs/cs.js',
+	  language: 'cs',
+	  menubar: '',
+	  automatic_uploads: true,
+	  images_upload_url: 'https://lexten.cz/upload.php',
+	  contextmenu: false,
+	  toolbar: 'formatselect | bold italic strikethrough forecolor backcolor | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat | link image media youtube | <?=($c->tinymce_code ? "code" : "")?>',
+      plugins: 'advlist autolink lists link image media charmap print preview hr anchor pagebreak paste <?=($c->tinymce_code ? "code" : "")?>',
+	  paste_as_text: true,
+      toolbar_mode: 'floating'
+    });
+	</script>
+</head>

@@ -1,0 +1,30 @@
+<article>
+    <?php
+    if(isset($_SESSION['error_message'])):
+    ?>
+    <section class="error">
+            <?=$_SESSION['error_message']?>
+    </section>
+    <?php
+    unset($_SESSION['error_message']);
+    endif;
+    ?>
+    <form method="post" enctype="multipart/form-data">
+        <input type="text" name="title" class="form-control" placeholder="Titulek*" <?=isset($_POST['title']) ? 'value="'.$_POST['title'].'"' : ''?>/>
+        
+        <label for="fotka">Obrázek novinky</label>
+        <input type="file" name="fotka" id="fotka" accept="image/jpeg, image/png, image/svg" />
+        <br/>
+        <label for="sub">Krátký popis</label>
+        <textarea id="sub" name="sub">
+            <?=isset($_POST['sub']) ? $_POST['sub'] : ''?>
+        </textarea>
+        
+        <label for="content">Obsah článku*</label>
+        <textarea id="content" name="content" style="height:500px" placeholder="test">
+            <?=isset($_POST['content']) ? $_POST['content'] : ''?>
+        </textarea>
+        
+        <input type="submit" name="article_add" class="btn btn-primary form-control" value="Přidat novinku"/>
+    </form>
+</article>

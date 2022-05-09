@@ -1,0 +1,54 @@
+<?php
+    $limit = 50;
+    $topstats = $this->getTopStats($limit);
+?>
+
+<article>
+  <section id="top_stats" class="top-stats">
+    <table class="table table-stripped table-dark">
+        <thead>
+            <th></th>
+            <th><a href="?order=name&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">Nick</a></th>
+            <th><a href="?order=kills&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">Killy</a></th>
+            <th><a href="?order=deaths&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">Umrtí</a></th>
+            <th><a href="?order=kd&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">K/D</a></th>
+            <th><a href="?order=warden_count&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">Warden</a></th>
+            <th><a href="?order=fd_count&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">VD</a></th>
+            <th><a href="?order=pp_claims&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">PP</a></th>
+            <th><a href="?order=lg_claims&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">LG</a></th>
+            <th><a href="?order=total_time&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">Hodin</a></th>
+            <th><a href="?order=score&desc=<?=!isset($_GET['desc']) ? "true" : $_GET['desc'] == "true" ? "false" : "true"?>">Score</a></th>
+        </thead>
+        <tbody>
+            <?php
+                $i = $limit * ($this->page-1);
+                foreach($topstats as $user){
+                    ?>
+                        <tr>
+                            <td><?=($i+1).'.'?></td>
+                            <td><img src="<?=$user['avatar']?>" alt="Avatar" class="avatar" /> <a href="/stats/<?=User::toCommunityID($user['steamid'])?>" <?=($user['vip'] > strtotime("now") ? "class=\"vip-color\"" : "")?>><?=$user['name']?></a></td>
+                            <td><?=$user['kills']?></td>
+                            <td><?=$user['deaths']?></td>
+                            <td><?=$user['kd']?></td>
+                            <td><?=$user['warden_count']?></td>
+                            <td><?=$user['fd_count']?></td>
+                            <td><?=$user['pp_claims']?></td>
+                            <td><?=$user['lg_claims']?></td>
+                            <td><?=round($user['total_time']/60/60, 1)?>h</td>
+                            <td><?=round($user['score'],2)?></td>
+                        </tr>
+                    <?php
+                    $i++;
+                }
+            ?>
+        </tbody>
+    </table>
+  </section>
+
+    <section id="pagination">
+            <?php
+                $this->pagination(1, $this->GetTopStatsCount(), "", [], $limit, $this->page, 2);
+            ?>
+    </section>
+    
+</article>

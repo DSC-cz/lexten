@@ -1,0 +1,39 @@
+<?php
+
+    $article = $this->selectArticle(false);
+
+?>
+
+<article>
+    <?php
+    if(isset($_SESSION['error_message'])):
+    ?>
+    <section class="error">
+            <?=$_SESSION['error_message']?>
+    </section>
+    <?php
+    unset($_SESSION['error_message']);
+    endif;
+    ?>
+    <form method="post" enctype="multipart/form-data">
+        <input type="text" name="title" class="form-control" placeholder="Titulek*" value="<?=isset($_POST['title']) ? $_POST['title'] : $article['nazev']?>"/>
+        <input type="checkbox" id="edit_alias" name="edit_alias" />&nbsp;<label for="edit_alias">Upravit odkaz článku podle aktuálního titulku</label>
+        <br/>
+        <label for="fotka">Obrázek novinky</label>
+        <br/>
+        <img src="/<?=$article['image']?>" onerror="this.src='/images/no-image.png'" style="max-height:300px;max-width: 100%;" alt="obrazek novinky" />
+        <input type="file" name="fotka" id="fotka" accept="image/jpeg, image/png, image/svg" />
+        <br/>
+        <label for="sub">Krátký popis</label>
+        <textarea id="sub" name="sub">
+            <?=isset($_POST['sub']) ? $_POST['sub'] : $article['sub']?>
+        </textarea>
+        
+        <label for="content">Obsah článku*</label>
+        <textarea id="content" name="content" style="height:500px" placeholder="test">
+            <?=isset($_POST['content']) ? $_POST['content'] : $article['text']?>
+        </textarea>
+        
+        <input type="submit" name="article_edit" class="btn btn-primary form-control" value="Upravit novinku"/>
+    </form>
+</article>

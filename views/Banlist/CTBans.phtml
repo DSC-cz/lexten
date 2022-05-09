@@ -1,0 +1,37 @@
+<article>
+    <section id="ct" class="banlist">
+            <div class="header">
+                <div>Nick</div>
+                <div>Čas</div>
+                <div>Důvod</div>
+                <div>Admin</div>
+                <div>Vyprší</div>
+            </div>
+            <div class="content">
+            <?php
+                $ctbans = $this->getCTBans(15, $this->page);
+
+            foreach($ctbans as $ctban){
+                ?>
+                    <a href="/banlist/detail/ctban/<?=$ctban['id']?>">
+                        <div style="--remain: <?=$ctban['rounds_given'] == -1 ? "100" : (100-($ctban['rounds_actual']/$ctban['rounds_given'])*100)?>%" class="<?=$ctban['rounds_given'] == -1 ? "active" : ($ctban['rounds_actual'] <= 0 ? 'expired' : 'active')?> content__row">
+                            <div><?=$ctban['name']?></div>
+                            <div><?=date("d.m.Y H:i", $ctban['time'])?></div>
+                            <div><?=$ctban['reason']?></div>
+                            <div><?=!empty($ctban['admin_name']) ? $ctban['admin_name'] : "LEXTEN.cz"?></div>
+                            <div><?=$ctban['rounds_given'] == -1 ? "Permanentní ban" : $ctban['rounds_actual'] . ' / '. $ctban['rounds_given']?></div>
+                        </div>
+                    </a>
+                <?php
+            }
+            ?>
+            </div>
+        </section>
+        <section id="pagination">
+            <?php
+		if(isset($this->params[1]) && $this->params[1] == "user") $this->pagination(1, 'sm_ctlocks', '`accountid`=:accountid', [":accountid"=>$this->params[2]], 15, $this->page, 0, "banlist/ctbans/user/".$this->params[2]);
+                else $this->pagination(1, 'sm_ctlocks', '1=1', 15, $this->page, 2);
+
+            ?>
+        </section>
+</article>

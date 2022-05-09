@@ -1,0 +1,27 @@
+<?php
+    $article = $this->selectArticle();
+?>
+
+<article>
+    <?php if (User::isModerator([1,2])):?>
+    <section class="admin-panel d-flex flex-wrap justify-content-end mb-3">
+        <form action="#" method="POST"><button name="public" class="btn btn-<?=$article['public'] ? "warning" : "success"?> ml-2"><?=$article['public'] ? "Zrušit publikování" : "Publikovat"?></button></form>
+        <a href="<?=$this->getURLSlash(2)?>/edit" class="btn btn-secondary ml-2">Upravit</a>
+        <form action="#" method="POST"><button name="delete" class="btn btn-danger ml-2">Smazat</button></form>
+    </section>
+    <?php
+        endif;
+    ?>
+    <section class="title">
+        <div class="title__head">
+            <h1><?=$article['nazev']?></h1>
+            <h3><?=$article['sub']?></h3>
+        </div>
+        <img src="/<?=$article['image']?>" onerror="this.src='/images/no-image.png'" alt="Obrázek novinky" />
+    </section>
+    <section class="post">
+        <?=$article["text"]?>
+
+        <blockquote>Zobrazeno <?=$article["views"]?>x</blockquote>
+    </section>
+</article>

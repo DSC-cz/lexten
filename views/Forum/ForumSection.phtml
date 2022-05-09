@@ -1,0 +1,52 @@
+<article class="halfpage">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"></path>
+    </svg>
+    <a href="/forum">Fórum</a>
+    <section id="forum">
+        <table class="table table-dark table-striped" style="margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th>Téma</th>
+                    <th>Autor</th>
+                    <th>Poslední příspěvek</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    $topics_per_page = 10;
+                    $section = $this->getSection(1, $topics_per_page);
+                    for($i = 0; $i < count($section); $i++){
+                        ?>
+                            <tr>
+                                <td>
+                                    <?php
+                                        if($section[$i]['up'] == 1) echo '<i class="fas fa-info-circle"></i>';
+                                        elseif($section[$i]['lock'] == 1) echo '<i class="fas fa-lock"></i>';
+                                        else echo '<i class="fas fa-lock-open"></i>';
+                                    ?>
+                                    <a href="/forum/topic/<?=$section[$i]['id']?>"><?=$section[$i]['nazev']?></a>
+                                </td>
+                                <td><img src="<?=$section[$i]['avatarsmall']?>" class="avatar" alt="Avatar" /> <a href="/stats/<?=$section[$i]['author']?>" <?php echo !empty($section[$i]['barva']) ? 'style="color: #'.$section[$i]['barva'].';"' : '';?>><?=$section[$i]['nick']?></a></td>
+                                <td><?php
+                                    $lastcomment = $this->getLastComment(-1, $section[$i]['id']);
+                                    echo '<img src="'.$lastcomment['avatarsmall'].'" class="avatar" alt="Avatar" /> ';
+                                    echo '<a href="/stats/'.$lastcomment['author'].'" '.(!empty($lastcomment['barva']) ? 'style="color: #'.$lastcomment['barva'].'"' : '').'>'.$lastcomment['nick'].'</a><br/><a href="/forum/topic/'.($lastcomment['podrazeno'] == 0 ? $lastcomment['id'] : $lastcomment['podrazeno']).'">'.date("d. m. Y H:i", strtotime($lastcomment['datum'])).'</a>';
+                                ?></td>
+                            </tr>
+                        <?php
+                    }
+                ?>
+            </tbody>
+        </table>
+    </section>
+    <a href="/forum/sekce/<?=$this->id?>/add"><button class="btn btn-secondary">+ Přidat téma</button></a>
+    <section id="pagination">
+        <?php
+            $this->pagination(0, 'forum_topics', '`section` = :section AND `show`=1 AND `podrazeno`=0', [":section"=>$this->id], $topics_per_page, $this->page, 3);
+        ?>
+    </section>
+</article>
+<?php
+    require('aside.phtml');
+?>

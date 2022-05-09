@@ -1,0 +1,64 @@
+<article>
+    <section id="hq">
+        <h1 class="m-center">HQ</h1>
+        <div class="boxes d-flex justify-d-start-m-center flex-wrap">
+        <?php
+            $admins = User::getUsersinGroup(1, true);
+            foreach($admins as $admin){
+                ?>
+                    <div class="box ml-3 mt-3">
+                        <div class="avatar">
+                            <img src="<?=$admin['avatar']?>" alt="Avatar" />
+                        </div>
+                        <a href="/stats/<?=$admin['steamid']?>"><h1 style="color: #<?=$admin['barva']?>"><?=$admin['nick']?></h1></a>
+                        <h3><?=$admin['discord']?></h3>
+                        <?=empty($admin['steam']->gameextrainfo) ? $this->getState($admin['steam']->personastate) : '<p class="status-ingame">'.$admin['steam']->gameextrainfo.'</p>'?>
+                    </div>
+                <?php
+            }
+        ?>
+        </div>
+    </section>
+
+    <section id="mods">
+        <h1 class="m-center">Moderátoři</h1>
+        <div class="boxes d-flex justify-d-start-m-center flex-wrap">
+        <?php
+            $mods = User::getUsersInGroup(2, true);
+            foreach($mods as $mod){
+                ?>
+                    <div class="box ml-3 mt-3">
+                        <div class="avatar">
+                            <img src="<?=$mod['avatar']?>" alt="Avatar" />
+                        </div>
+                        <a href="/stats/<?=$mod['steamid']?>"><h1 style="color: #<?=$mod['barva']?>"><?=$mod['nick']?></h1></a>
+                        <h3><?=$mod['discord']?></h3>
+                        <?=!isset($mod['steam']->gameextrainfo) ? $this->getState($mod['steam']->personastate) : '<p class="status-ingame">'.$mod['steam']->gameextrainfo.'</p>'?>
+                    </div>
+                <?php
+            }
+        ?>
+        </div>
+    </section>
+
+    <section id="helpers">
+        <h1 class="m-center">Helpeři</h1>
+        <div class="boxes d-flex justify-d-start-m-center flex-wrap">
+        <?php
+            $mods = User::getUsersInGroup(5, true);
+            foreach($mods as $mod){
+                ?>
+                    <div class="box ml-3 mt-3">
+                        <div class="avatar">
+                            <img src="<?=$mod['avatar']?>" alt="Avatar" />
+                        </div>
+                        <a href="/stats/<?=$mod['steamid']?>"><h1 style="color: #<?=$mod['barva']?>"><?=$mod['nick']?></h1></a>
+                        <h3><?=$mod['discord']?></h3>
+                        <?=!isset($mod['steam']->gameextrainfo) ? $this->getState($mod['steam']->personastate) : '<p class="status-ingame">'.$mod['steam']->gameextrainfo.'</p>'?>
+                    </div>
+                <?php
+            }
+        ?>
+        </div>
+    </section>
+</article>

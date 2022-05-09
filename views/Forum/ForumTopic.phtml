@@ -1,0 +1,121 @@
+<article class="halfpage">
+    <?php if(isset($_SESSION['error_message'])):?>
+    <section class="error">
+        <?=$_SESSION['error_message'];?>
+    </section>
+    <?php endif; unset($_SESSION['error_message']);?>
+<?php
+    $topic_info = $this->getTopicInfo();
+?>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"></path>
+    </svg>
+    <a href="/forum/sekce/<?=$topic_info['section']?>"><?=$topic_info['section_name']?></a>
+    <h3 class="forum-title text-center <?php echo $topic_info['lock'] == 1 ? 'locked' : 'unlocked';?>"><?=$topic_info['nazev']?></h3>
+<?php
+    $posts_per_page = 10;
+    $topic = $this->getTopic($posts_per_page);
+        
+    $licon = array('fas fa-lock', 'fas fa-unlock', 'Zamknout téma', 'Odemknout téma ('.$topic[0]['lockedby'].')');
+?>
+
+    <?php
+        for($i = 0; $i < $posts_per_page; $i++){
+            if(!isset($topic[$i])) break;
+            ?>
+            <section id="<?=$topic[$i]['id']?>" class="post">
+                <div class="post__author" style="--post-color: <?=(!empty($topic[$i]['barva']) ? '#'.$topic[$i]['barva'] : '#404040')?>">
+                    <img src="<?=$topic[$i]['avatarmedium']?>" alt="avatar" class="avatar"/>
+                    <div class="dropdown">
+                        <a href="#" id="profile_<?=$topic[$i]['id']?>" role="button" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?=$topic[$i]['nick']?></a>
+                        <div aria-labelledby="profile_<?=$topic[$i]['id']?>" class="dropdown-menu">
+                            <ul>
+                                <li><strong>Příspěvků:</strong> <?=$topic[$i]['posts']?></li>
+                                <li><strong>Registrace:</strong> <?=date("d.m.Y", strtotime($topic[$i]['firstjoin']))?></li>
+                                <li><strong>Online</strong>: <?=date("d.m.Y H:i", strtotime($topic[$i]['lastjoin']))?></li>
+                                <?=($topic[$i]['discord'] == '/' ? '' : '<li><strong>Discord:</strong> '.$topic[$i]['discord'].'</li>')?>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <a href="/stats/<?=$topic[$i]['author']?>" class="btn btn-primary mx-auto">Zobrazit profil</a>
+                        </div>
+                    </div>
+                </div>
+                <p class="post-date"><?=date("d M Y H:i", strtotime($topic[$i]['datum']))?><?php
+				$topic[$i]['edited'] = json_decode($topic[$i]['edited']);
+				if(isset($topic[$i]['edited']->edited_by)){
+					if($topic[$i]['edited']->edited_by == $topic[$i]['author']) echo ', <span data-toggle="tooltip" data-placement="bottom" title="'.date("d M Y H:i", $topic[$i]['edited']->time).'">Upraveno</span>';
+					else echo ', <span data-toggle="tooltip" data-placement="bottom" title="'.date("d M Y H:i", $topic[$i]['edited']->time).'">Upravil <a href="/stats/'.$topic[$i]['edited']->edited_by.'" style="color: black">'.User::getUserByCommunityId($topic[$i]['edited']->edited_by)['nick'].'</a></span>';
+
+				}
+
+			?>
+		</p>
+                    <div class="post__content">
+                        <?php
+                            if(User::isLoggedIn() && (User::isModerator(explode(",",$topic[$i]['moderator'])) || User::getUser()['steam_steamid'] == $topic[$i]['author'])){
+                        ?>
+                            <form class="admin" method="POST">
+                                <button name="edit" value="<?=$topic[$i]['id']?>"><i class="fas fa-edit" aria-hidden="true" attr-title="Upravit příspěvek"></i></button>
+                                <button name="delete" value="<?=$topic[$i]['id']?>"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
+                                <?php if ($topic[$i]['podrazeno'] == 0):?>
+                                <button name="lock" value="<?=$topic[$i]['id']?>"><i class="<?=$licon[$topic[$i]['lock']]?>" attr-title="<?=$licon[$topic[$i]['lock']+2]?>.'"></i></button>
+                                <?php endif;?>
+                            </form>
+                        <?php
+                            }
+                        ?>
+                        <div style="margin-top: 50px" class="content"><?=$topic[$i]['text']?></div>
+                        <div class="reactions">
+                            <?php 
+                                $reactions = $this->getReactions($topic[$i]['id']);
+                                $reaction_icons = array(
+                                    "far fa-thumbs-up",
+                                    "far fa-thumbs-down",
+                                    "far fa-laugh-squint",
+                                    "fas fa-angry",
+                                    "fas fa-heart"
+                                );
+                                for($k = 0; $k < count($reaction_icons); $k++){
+                                    if(isset($reactions[$k+1]) && User::isLoggedIn()) $class = in_array_r(User::getUser()["steam_steamid"], $reactions[$k+1]) ? 'selected' : '';
+                                    else $class = "";
+                                    ?>
+                                        <span class="reaction-on <?=$class?>" count="<?=isset($reactions[$k+1]) ? count($reactions[$k+1]) : 0?>">
+                                            <i class="<?=$reaction_icons[$k]?>"></i>
+                                            <?php
+                                                    echo '<ul class="title">';
+                                                    if(isset($reactions[$k+1])) for($j = 0; $j < count($reactions[$k+1]);$j++)
+                                                        echo '<li id="r_'.$reactions[$k+1][$j]['steamid'].'"><img src="'.$reactions[$k+1][$j]['avatar'].'" style="width:20px;border-radius:100%;" alt="Avatar"/> '.$reactions[$k+1][$j]['nick'].', </li>';
+                                                    echo '</ul>';
+                                            ?>
+                                        </span>
+                                    <?php
+                                }
+                            ?>
+                        </div>
+                    </div>
+                </section>
+    <?php
+        }
+    ?>
+        <section id="pagination">
+            <?php
+                $this->pagination(0, 'forum_topics', '`id` = :id OR `podrazeno` = :podrazeno', [":id"=>$this->id, ":podrazeno"=>$this->id], $posts_per_page, $this->page, 3);
+            ?>
+        </section>
+
+        <?php
+            if($topic_info["lock"] == 0):
+        ?>
+        <section id="add">
+            <form action="#" method="POST" style="margin-top: 30px;">
+                <textarea class="form-control" id="tinymce" name="text" style="width:100%;height:500px;" placeholder="Obsah komentáře" ><?=isset($_POST['text']) ? $_POST['text'] : ''?></textarea>
+                <button name="commentadd" class="btn btn-primary">Přidat komentář</button>
+            </form>
+        </section>
+        <?php
+            endif;
+        ?>
+    </article>
+
+    <?php
+    require('aside.phtml');

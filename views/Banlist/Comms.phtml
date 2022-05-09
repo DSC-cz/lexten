@@ -1,0 +1,36 @@
+<article>
+<section id="comms" class="banlist">
+        <div class="header">
+            <div>Nick</div>
+            <div>Čas</div>
+            <div>Důvod</div>
+            <div>Admin</div>
+            <div>Vyprší</div>
+        </div>
+        <div class="content">
+        <?php 
+            $comms = $this->getComms(15);
+            
+            foreach($comms as $comm){
+                ?>
+                    <a href="/banlist/detail/comm/<?=$comm['id']?>">
+                        <div style="--remain: <?=$comm['expire'] == 0 ? "100" : (100-(($comm['expire'] - strtotime("now"))/($comm['expire']-$comm['added']))*100)?>%" class="<?=($comm['expire'] < strtotime("now") && $comm['expire'] != 0 ? 'expired' : 'active')?> content__row">
+                            <div><i class="<?=$comm['type'] == 1 ? "fas fa-microphone-slash" : "fas fa-comment-slash" ?>"></i> <?=!empty($comm['name']) ? $comm['name'] : "<i>Undefined</i>"?></div>
+                            <div><?=date("d.m.Y H:i", $comm['added'])?></div>
+                            <div><?=$comm['reason']?></div>
+                            <div><?=!empty($comm['admin_name']) ? $comm['admin_name'] : "LEXTEN.cz"?></div>
+                            <div><?=$comm['expire'] < strtotime("now") ? "Vypršel" : ($comm['expire'] == 0 ? "Permanentní umlčení" : round(($comm['expire']-strtotime("now"))/60, 1)."min")?></div>
+                       </div>
+                    </a>
+                <?php
+            }
+        ?>
+        </div>
+    </section>
+    <section id="pagination">
+            <?php
+		if(isset($this->params[1]) && $this->params[1] == "user") $this->pagination(1, 'sm_comms', '`removed` = 0 AND `accountid`=:accountid', [":accountid"=>$this->params[2]], 15, $this->page, 0, "banlist/comms/user/".$this->params[2]);
+                else $this->pagination(1, 'sm_comms', '`removed` = 0', [], 15, $this->page, 2);
+            ?>
+    </section>
+</article>

@@ -1,0 +1,50 @@
+<aside>
+	<?php
+		$last_joined_users = $this->getLastConnectedUsers();
+		$lastposts = $this->getTopics(-1, 0, 5, "a.datum DESC", true);
+	?>
+    <h3>Naposledy aktivní</h3>
+	<table class="table table-dark table-striped">
+		<tbody>
+			<?php
+			if($last_joined_users["status"]){
+				foreach($last_joined_users["results"] as $row){
+					?>
+					<tr>
+						<td class="lastcomment">
+							<img src="<?=$row['avatarmedium']?>" alt="Avatar"/>
+							<a href="/stats/<?=$row['steamid']?>" style="max-width:150px<?=!empty($row['barva']) ? ';color: #'.$row['barva'].'' : ''?>"><?=$row['nick']?></a>
+						</td>
+						<td>
+							<?php
+								$lastonline = strtotime("now")-strtotime($row['lastjoin']);
+								echo ($lastonline < 3600 ? round($lastonline/60, 0)."min": round($lastonline/60/60, 1).'h');
+							?>
+						</td>
+					</tr>
+					<?php
+				}
+			}
+			?>
+	</table>
+	<h3>Poslední příspěvky</h3>
+	<table class="table table-dark table-striped">
+		<tbody>
+			<?php for($i = 0; $i < count($lastposts); $i++){
+				?>
+			<tr>
+				<td>
+					<a href="/forum/topic/<?=$lastposts[$i]['podrazeno'] == 0 ? $lastposts[$i]['id'] : $lastposts[$i]['podrazeno']?>"><?=str_replace("Re: ", "", $lastposts[$i]['nazev']);?></a>
+				</td>
+				<td class="lastcomment">
+					<img src="<?=$lastposts[$i]['avatarsmall']?>" alt="Avatar"/>
+					<a href="/stats/<?=$lastposts[$i]['author']?>" title="<?=$lastposts[$i]['nick']?>" style="max-width:55px;max-height:30px<?=!empty($lastposts[$i]['barva']) ? ';color: #'.$lastposts[$i]['barva'].'' : ''?>"><?=$lastposts[$i]['nick']?> </a>
+					~ <?=round((strtotime("now") - strtotime($lastposts[$i]['datum']))/60/60, 1)?>h
+				</td>
+			</tr>
+			<?php
+			}
+			?>
+		</tbody>
+	</table>
+</aside>

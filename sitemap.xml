@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://lexten.cz/</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/forum/</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/pravidla</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/clanek/zakoupeni-vip/</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/dema</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/chatlog</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/banlist/</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/stats/top</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/team</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://lexten.cz/clanek/archiv</loc>
+  <lastmod>2021-10-28T13:23:36+00:00</lastmod>
+  <priority>0.90</priority>
+</url>
+</urlset>

@@ -1,0 +1,92 @@
+<article>
+    <h1>CT Bany</h1>
+    <section id="ct" class="banlist">
+        <div class="header">
+            <div>Nick</div>
+            <div>Čas</div>
+            <div>Důvod</div>
+            <div>Admin</div>
+            <div>Vyprší</div>
+        </div>
+        <div class="content">
+        <?php
+            $ctbans = $this->getCTBans(5);
+
+            foreach($ctbans as $ctban){
+                ?>
+                    <a href="/banlist/detail/ctban/<?=$ctban['id']?>">
+                        <div style="--remain: <?=$ctban['rounds_given'] == -1 ? "100" : (100-($ctban['rounds_actual']/$ctban['rounds_given'])*100)?>%" class="<?=$ctban['rounds_given'] == -1 ? "active" : ($ctban['rounds_actual'] <= 0 ? 'expired' : 'active')?> content__row">
+                            <div><?=$ctban['name']?></div>
+                            <div><?=date("d.m.Y H:i", $ctban['time'])?></div>
+                            <div><?=$ctban['reason']?></div>
+                            <div><?=!empty($ctban['admin_name']) ? $ctban['admin_name'] : "LEXTEN.cz"?></div>
+                            <div><?=$ctban['rounds_given'] == -1 ? "Permanentní ban" : $ctban['rounds_actual'] . ' / '. $ctban['rounds_given']?></div>
+                        </div>
+                    </a>
+                <?php
+            }
+        ?>
+        </div>
+        <a href="/banlist/ctbans/" class="btn btn-primary mt-3 mb-3 w-100">Zobrazit všechny CT bany</a>
+    </section>
+    <h1>Bany</h1>
+    <section id="bans" class="banlist">
+        <div class="header">
+            <div>Nick</div>
+            <div>Čas</div>
+            <div>Důvod</div>
+            <div>Admin</div>
+            <div>Vyprší</div>
+        </div>
+        <div class="content">
+        <?php 
+            $bans = $this->getBans(5);
+            
+            foreach($bans as $ban){
+                ?>
+                    <a href="/banlist/detail/ban/<?=$ban['id']?>">
+                        <div style="--remain: <?=$ban['expire'] == 0 ? "100" : (100-(($ban['expire'] - strtotime("now"))/($ban['expire']-$ban['added']))*100)?>%" class="<?=($ban['expire'] < strtotime("now") && $ban['expire'] != 0 ? 'expired' : 'active')?> content__row">
+                            <div><?=!empty($ban['name']) ? $ban['name'] : "<i>Undefined</i>" ?></div>
+                            <div><?=date("d.m.Y H:i", $ban['added'])?></div>
+                            <div><?=$ban['reason']?></div>
+                            <div><?=!empty($ban['admin_name']) ? $ban['admin_name'] : "LEXTEN.cz"?></div>
+                            <div><?=$ban['expire'] == 0 ? "Permanentí ban" : ($ban['expire'] < strtotime("now") ? "Vypršel" : round(($ban['expire']-strtotime("now"))/60, 1)."min")?></div>
+                        </div>
+                    </a>
+                <?php
+            }
+        ?>
+        </div>
+        <a href="/banlist/bans/" class="btn btn-primary mt-3 mb-3 w-100">Zobrazit všechny Bany</a>
+        </section>
+    <h1>Umlčení</h1>
+    <section id="comms" class="banlist">
+        <div class="header">
+            <div>Nick</div>
+            <div>Čas</div>
+            <div>Důvod</div>
+            <div>Admin</div>
+            <div>Vyprší</div>
+        </div>
+        <div class="content">
+        <?php 
+            $comms = $this->getComms(5);
+            
+            foreach($comms as $comm){
+                ?>
+                    <a href="/banlist/detail/comm/<?=$comm['id']?>">
+                        <div style="--remain: <?=$comm['expire'] == 0 ? "100" : (100-($comm['added']/$comm['expire'])*100)?>%" class="<?=($comm['expire'] < strtotime("now") && $comm['expire'] != 0 ? 'expired' : 'active')?> content__row">
+                            <div><i class="<?=$comm['type'] == 1 ? "fas fa-microphone-slash" : "fas fa-comment-slash" ?>"></i> <?=!empty($comm['name']) ? $comm['name'] : "<i>Undefined</i>"?></div>
+                            <div><?=date("d.m.Y H:i", $comm['added'])?></div>
+                            <div><?=$comm['reason']?></div>
+                            <div><?=!empty($comm['admin_name']) ? $comm['admin_name'] : "LEXTEN.cz"?></div>
+                            <div><?=$comm['expire'] < strtotime("now") ? "Vypršel" : ($comm['expire'] == 0 ? "Permanentní umlčení" : round(($comm['expire']-strtotime("now"))/60, 1)."min")?></div>
+                       </div>
+                    </a>
+                <?php
+            }
+        ?>
+        </div>
+        <a href="/banlist/comms/" class="btn btn-primary mt-3 mb-3 w-100">Zobrazit všechna umlčení</a>
+    </section>
+</article>

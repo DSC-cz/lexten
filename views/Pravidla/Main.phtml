@@ -1,0 +1,20 @@
+<article>
+    <section class="header halfpage">
+        <h1>Pravidla serveru</h1>
+    </section>
+    <aside class="pt-1 pb-3">
+    <button id="rules_button" class="float-right btn btn-secondary">Krátká verze</button>
+    <?php if(User::isLoggedIn() && User::isModerator(array(1))):?>
+        <a href="<?=$_SERVER['REQUEST_URI']?>/edit"><button class="float-right mr-2 btn btn-danger">Upravit</button></a>
+    <?php endif;?>
+    </aside>
+    <section class="content">
+        <?php 
+            $rules = file_get_contents("views/Pravidla/pravidla.html", true);
+            $rules = preg_replace('@\[hidden\]([^[]*)\[/hidden\]@', '<span class="hidden">$1</span>', $rules);
+            
+            echo $rules;
+        
+        ?>
+    </section>
+</article>

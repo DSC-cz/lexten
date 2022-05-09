@@ -1,0 +1,36 @@
+<article>
+<section id="bans" class="banlist">
+        <div class="header">
+            <div>Nick</div>
+            <div>Čas</div>
+            <div>Důvod</div>
+            <div>Admin</div>
+            <div>Vyprší</div>
+        </div>
+        <div class="content">
+        <?php 
+            $bans = $this->getBans(15);
+            
+foreach($bans as $ban){
+                ?>
+                    <a href="/banlist/detail/ban/<?=$ban['id']?>">
+                        <div style="--remain: <?=$ban['expire'] == 0 ? "100" : (100-(($ban['expire'] - strtotime("now"))/($ban['expire']-$ban['added']))*100)?>%" class="<?=($ban['expire'] < strtotime("now") && $ban['expire'] != 0 ? 'expired' : 'active')?> content__row">
+                            <div><?=!empty($ban['name']) ? $ban['name'] : "<i>Undefined</i>" ?></div>
+                            <div><?=date("d.m.Y H:i", $ban['added'])?></div>
+                            <div><?=$ban['reason']?></div>
+                            <div><?=!empty($ban['admin_name']) ? $ban['admin_name'] : "LEXTEN.cz"?></div>
+                            <div><?=$ban['expire'] == 0 ? "Permanentí ban" : ($ban['expire'] < strtotime("now") ? "Vypršel" : round(($ban['expire']-strtotime("now"))/60, 1)."min")?></div>
+                        </div>
+                    </a>
+                <?php
+            }
+        ?>
+        </div>
+    </section>
+    <section id="pagination">
+            <?php
+		if(isset($this->params[1]) && $this->params[1] == "user") $this->pagination(1, 'sm_bans', '`unban` = 0 AND `accountid`=:accountid', [":accountid"=>$this->params[2]], 15, $this->page, 0, "banlist/bans/user/".$this->params[2]);
+                else $this->pagination(1, 'sm_bans', '`unban` = 0', [], 15, $this->page, 2);
+            ?>
+        </section>
+</article>
