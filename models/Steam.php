@@ -4,7 +4,7 @@ class Steam{
     protected $key;
 
     public function __construct(){
-        $this->key = "AE9A8C307444F24E0E1B65230C031246";
+        $this->key = "xxxxx";
     }
 
     public function getData($steamids){
