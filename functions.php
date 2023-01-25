@@ -16,8 +16,6 @@ function loadShortcodes(){
 }
 
 function discord($title, $mark, $desc, $topic_url, $hex, $authorname, $authorurl, $authorimg, $url){
-	//$url = "https://discordapp.com/api/webhooks/702180525074546738/tfkvuv9sB9fGMQjaxMqpTcV3I1qwKrBF9WKb3ty9TDI2DnZXjrp3tOW1IUVbltwZqhth";
-	
 	$hookObject = json_encode([
 			"content" => "$mark",
 			"embeds" => [
